@@ -78,24 +78,27 @@ class BlumBlumShub(object):
             result = (result << 1) | (self.state&1)
         
         return result    
-    
-    import random
  
 def is_Prime(n):
     """
-    Miller-Rabin primality test.
+    O teste Miller-Rabin eh um teste probabilistico da primitividade de um dado numero n
+    Se o numero passar no teste, ele eh primo, com uma probabilidade de 75 dependendo de quantas vezes eh testado
+    nesse caso, oito vezes
  
-    A return value of False means n is certainly not prime. A return value of
-    True means n is very likely a prime.
+    Se retornar False, com certeza nao eh primo
+    Se retornar True, muito provavelmente eh um primo
     """
-    if n!=int(n):
+
+    # se nao for inteiro nao eh primo
+    if n!=int(n): 
         return False
     n=int(n)
-    #Miller-Rabin test for prime
-    if n==0 or n==1 or n==4 or n==6 or n==8 or n==9:
+
+    # elimina os nao primos menor que 10
+    if n==0 or n==1 or n==4 or n==6 or n==8 or n==9: 
         return False
- 
-    if n==2 or n==3 or n==5 or n==7:
+    # elmina os primos menor que 10
+    if n==2 or n==3 or n==5 or n==7: 
         return True
     s = 0
     d = n-1
@@ -104,36 +107,38 @@ def is_Prime(n):
         s+=1
     assert(2**s * d == n-1)
  
-    def trial_composite(a):
+    def trial_composite(a): 
+        """
+        se n eh numero primo e a nao tiver divisor em comum com d nao eh primo 
+        """
         if pow(a, d, n) == 1:
             return False
+        """
+        Ou se exitir um r E {0,1,...s-1} tal que a ^2^^i*d equivalente a -1 mod n, tambem nao eh primo
+        """
         for i in range(s):
             if pow(a, 2**i * d, n) == n-1:
                 return False
         return True  
- 
-    for i in range(8):#number of trials 
+        
+    #Oito tentativas para testar se o numero eh primo
+    for i in range(8):
+        #pega um numero ramdomicamente num range [2,n-1]
         a = random.randrange(2, n)
-        if trial_composite(a):
+        #se eh composto, nao eh primo 
+        if trial_composite(a): 
             return False
- 
+    
+    # se chegar aqui, provavelmente eh primo
     return True  
 
 if __name__ == "__main__":
-    bbs = BlumBlumShub(128);
+     # seed inicial
+    bbs = BlumBlumShub(128)
     prime = 0
     while is_Prime(prime) != True:
-       prime = bbs.next(4096)
+       prime = bbs.next(32)
     else:
         print(prime)
-
-   
         
     #print "Generating 10 numbers"
-    
-    # print("type: u")
-    # print("numbit: 32")
-    # print("count: 1")
-    # for i in xrange (1):
-    #     print(bbs.next(4096))
-    # print(bbs.getPrime(32))
