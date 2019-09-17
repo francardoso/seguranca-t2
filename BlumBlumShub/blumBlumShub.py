@@ -1,24 +1,22 @@
 """
-Adapted from http://javarng.googlecode.com/svn/trunk/com/modp/random/BlumBlumShub.java
+Adaptado de http://javarng.googlecode.com/svn/trunk/com/modp/random/BlumBlumShub.java
+fonte: https://github.com/VSpike/BBS
 """
-
-# fonte https://github.com/VSpike/BBS
 
 import sys
 import random
 import primes
+import time
 
 class BlumBlumShub(object):
 
 
     def getPrime(self, bits):
         """
-        Generate appropriate prime number for use in Blum-Blum-Shub.
-         
-        This generates the appropriate primes (p = 3 mod 4) needed to compute the
-        "n-value" for Blum-Blum-Shub.
-         
-        bits - Number of bits in prime
+        Gera numero primo para uso no algoritmo Blum-Blum-Shub.
+
+        Isso gera um numero primo apropriado (congruentes a 3 (mod 4)) necessarios para
+        computador o numero m
         """
         while True:
             p = primes.bigppr(bits)
@@ -27,41 +25,34 @@ class BlumBlumShub(object):
 
     def generateN(self, bits):
         """
-        This generates the "n value" for use in the Blum-Blum-Shub algorithm.
-       
-        bits - The number of bits of security
+        Gera o valor de "n" com base em dois primos gerados
         """
     
         p = self.getPrime(bits/2)
         while 1:
             q = self.getPrime(bits/2)
-            # make sure p != q (almost always true, but just in case, check)
+            #certifica que p eh diferente de q
             if p != q:
                 return p * q    
 
     def __init__(self, bits):
         """
-        Constructor, specifing bits for n.
-         
-        bits - number of bits
+        Construtor, definindo o numero de bits para "n"
         """        
-        self.n = self.generateN(bits)
-        # print "n set to " + repr(self.n)
-        length = self.bitLen(self.n)
+        self.m = self.generateN(bits)
+        length = self.bitLen(self.m)
         seed = random.getrandbits(length)
         self.setSeed(seed)  
 
     def setSeed(self, seed):
         """
-        Sets or resets the seed value and internal state.
-         
-        seed -The new seed
+        Seta ou reseta o valor da seed e o valor interno
         """
     
-        self.state = seed % self.n
+        self.state = seed % self.m
     
     def bitLen(self, x):
-        " Get the bit lengh of a positive number" 
+        "Retorna o tamanho em bits de um inteiro" 
         assert x > 0
         q = 0 
         while x: 
@@ -70,11 +61,13 @@ class BlumBlumShub(object):
         return q     
 
     def next(self, numBits):
-        "Returns up to numBit random bits"
-        
+        """
+        Returno bits aleatorios de tamanho = numBits
+        pela formula Xn+1 = Xn^2 modulo M, onde M eh o produto de dois primos grandes
+        """
         result = 0
         for i in xrange(numBits):
-            self.state = (self.state**2) % self.n
+            self.state = (self.state**2) % self.m
             result = (result << 1) | (self.state&1)
         
         return result    
@@ -136,9 +129,11 @@ if __name__ == "__main__":
      # seed inicial
     bbs = BlumBlumShub(128)
     prime = 0
+    start = time.time()
     while is_Prime(prime) != True:
-       prime = bbs.next(32)
+       prime = bbs.next(4096)
     else:
         print(prime)
+        end = time.time()
+        print(end-start)
         
-    #print "Generating 10 numbers"

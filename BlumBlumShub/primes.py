@@ -6,11 +6,10 @@ import random
 
 def bigppr(bits=256):
     """
-    Randomly generate a probable prime with a given
-    number of hex digits
+    Ramdomicamente gera um provavel numero primo data um numero de digitos em hexadecimal
     """
      
-    candidate = random.getrandbits(bits) | 1  # Ensure odd
+    candidate = random.getrandbits(bits) | 1  # certificar que eh impar
 
     prob = 0
     while 1:
@@ -21,14 +20,13 @@ def bigppr(bits=256):
         
 def pptest(n):
     """
-    Simple implementation of Miller-Rabin test for
-    determining probable primehood.
+    simples implementacao do miller-rabin para deste de provavel primo
     """
     
     if n<=1: 
         return 0
 
-    # if any of the primes is a factor, we're done
+    # se qualquer um dos primos eh um fator, ja era
     bases  = [random.randrange(2,50000) for x in xrange(90)]
 
     
@@ -39,9 +37,9 @@ def pptest(n):
     tests,s  = 0L,0
     m        = n-1
 
-    # turning (n-1) into (2**s) * m
+    # transformando (n-1) em (2**s) * m
 
-    while not m&1:  # while m is even
+    while not m&1:  #enquanto m eh impar
         m >>= 1
         s += 1
 
@@ -58,8 +56,8 @@ def pptest(n):
 
 def algP(m,s,b,n):
     """
-    based on Algorithm P in Donald Knuth's 'Art of
-    Computer Programming' v.2 pg. 395 
+    baseado no algoritmo P no Donald Knuth's ' Arte de programacao computacional
+    v.2 pg. 395 
     """
     y = pow(b,m,n)    
     
